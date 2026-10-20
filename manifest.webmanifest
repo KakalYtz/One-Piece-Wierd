@@ -1,0 +1,25 @@
+{
+  "name": "WEIRD RPG — One Piece",
+  "short_name": "WEIRD RPG",
+  "description": "WEIRD RPG — One Piece • Weird Version",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#080b10",
+  "theme_color": "#080b10",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

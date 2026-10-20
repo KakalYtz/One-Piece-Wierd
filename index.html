@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080b10">
+  <meta name="weird-rpg-version" content="26">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="WEIRD RPG">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <title>☠️ WEIRD RPG — One Piece</title>
+  <link rel="stylesheet" href="style.css?v=26">
+</head>
+<body data-theme="pirata" data-color="escuro">
+
+<header class="topbar">
+  <button class="brand" onclick="go('home')" aria-label="Ir para Home">
+    <span class="brand-icon">☠️</span>
+    <span><b>WEIRD RPG</b><small>ONE PIECE • WEIRD VERSION</small></span>
+  </button>
+
+  <nav class="main-nav" aria-label="Navegação principal">
+    <button onclick="go('home')">Home</button>
+    <button onclick="go('agents')">Agentes</button>
+    <button onclick="go('campaigns')">Campanhas</button>
+    <button onclick="go('threats')">Ameaças</button>
+    <button onclick="go('homebrew')">Homebrew</button>
+  </nav>
+
+  <div class="top-actions">
+    <button class="dice-top" onclick="openCustomDice()" title="Rolagem personalizada">🎲</button>
+    <button class="options-top" onclick="openOptions()" title="Opções e temas">⚙️</button>
+    <button id="installButton" class="install-top" onclick="installPWA()" title="Instalar WEIRD RPG no celular">📱</button>
+    <button id="accountButton" class="account" onclick="openModal('loginModal')">Entrar</button>
+  </div>
+</header>
+
+<main>
+
+<!-- NAVEGAÇÃO MÓVEL -->
+<div class="mobile-bottom-nav" aria-label="Navegação no celular">
+  <button data-page="home" onclick="go('home')"><span>⌂</span><small>Home</small></button>
+  <button data-page="agents" onclick="go('agents')"><span>👤</span><small>Agentes</small></button>
+  <button data-page="campaigns" onclick="go('campaigns')"><span>⚓</span><small>Campanhas</small></button>
+  <button data-page="threats" onclick="go('threats')"><span>👹</span><small>Ameaças</small></button>
+  <button data-page="homebrew" onclick="go('homebrew')"><span>🧪</span><small>Homebrew</small></button>
+  <button data-page="options" onclick="openOptions()"><span>⚙️</span><small>Opções</small></button>
+</div>
+
+  <section id="home" class="page active">
+    <div class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow">ONE PIECE • WEIRD VERSION</span>
+        <h1>Sua ficha.<br><em>Sua aventura.</em></h1>
+        <p>Crie personagens, evolua raças, escolha cargos, use Haki, Aura e Akuma no Mi, role dados e monte campanhas.</p>
+        <div class="hero-actions">
+          <button class="primary big" onclick="startCreation()">＋ Criar ficha</button>
+          <button class="secondary big" onclick="go('agents')">Ver meus agentes</button>
+          <button class="secondary big" onclick="openCustomDice()">🎲 Rolar dados</button>
+        </div>
+        <div class="hero-rule"><b>💡 Importante:</b> tudo funciona localmente por enquanto. Suas fichas e Homebrew ficam salvos neste navegador.</div>
+      </div>
+      <div class="hero-art">
+        <div class="wanted"><span>WANTED</span><div>☠️</div><strong>WEIRD</strong><small>DEAD OR ALIVE</small></div>
+        <div class="d20">D20</div>
+      </div>
+    </div>
+
+    <div class="heading"><div><span class="eyebrow">SISTEMA</span><h2>Tudo em um só lugar</h2></div></div>
+    <div class="feature-grid">
+      <article class="feature"><i>👤</i><h3>Fichas completas</h3><p>Nome, atributos, perícias, raça, cargo, Haki, Aura, fruta, inventário e história.</p></article>
+      <article class="feature"><i>🎲</i><h3>Rolagens grandes</h3><p>Testes de atributo, perícia, ataques, Haki, iniciativa e dados personalizados.</p></article>
+      <article class="feature"><i>⚔️</i><h3>Combate</h3><p>Poderes de fruta e armas equipadas aparecem automaticamente no combate.</p></article>
+      <article class="feature"><i>🧪</i><h3>Homebrew</h3><p>Crie suas próprias habilidades, itens, rituais, ataques e ameaças.</p></article>
+    </div>
+  </section>
+
+  <section id="agents" class="page">
+    <div class="page-head">
+      <div><span class="eyebrow">SEUS PERSONAGENS</span><h2>Agentes</h2><p class="muted">Cada botão abre exatamente a ficha correspondente.</p></div>
+      <div class="head-actions"><button class="secondary" onclick="importAgent()">⬆ Importar ficha</button><button class="primary" onclick="startCreation()">＋ Criar agente</button></div>
+    </div>
+    <div class="import-ready"><b>📥 Recebeu uma ficha de outro jogador?</b><p>Ele pode enviar o arquivo <b>.json</b> exportado pelo WEIRD RPG. Clique abaixo e a ficha será adicionada aos Agentes sem apagar as suas.</p><button class="secondary" onclick="importAgent()">📥 Importar ficha .json</button></div>
+    <div id="agentList" class="agent-grid"></div>
+  </section>
+
+  <section id="sheet" class="page"><div id="sheetRoot"></div></section>
+
+  <section id="create" class="page">
+    <div class="page-head">
+      <div><span class="eyebrow">NOVO AGENTE</span><h2 id="createTitle">Nova ficha</h2></div>
+      <button class="secondary" onclick="go('agents')">← Voltar</button>
+    </div>
+
+    <div id="creationStart">
+      <div class="rpg-choice selected"><div class="cover">☠️</div><div><h3>One Piece (Weird Version)</h3><p>RPG próprio com níveis, raças, cargos, Haki, Aura e Akuma no Mi.</p></div><strong>✓</strong></div>
+      <h3 class="subhead">Escolha o tema da ficha</h3>
+      <div class="theme-grid">
+        <button class="theme-choice selected" data-theme="pirata" onclick="chooseTheme('pirata',this)">🏴‍☠️<b>Pirata</b><small>Mar / Grand Line</small></button>
+        <button class="theme-choice" data-theme="marinha" onclick="chooseTheme('marinha',this)">⚓<b>Marinha</b><small>Justiça / Governo</small></button>
+        <button class="theme-choice" data-theme="revolucionario" onclick="chooseTheme('revolucionario',this)">🔥<b>Revolucionário</b><small>Liberdade</small></button>
+        <button class="theme-choice" data-theme="governo" onclick="chooseTheme('governo',this)">🏛️<b>Governo</b><small>Agência / Segredo</small></button>
+      </div>
+      <button class="primary big" onclick="beginEditor()">Continuar →</button>
+    </div>
+    <div id="editorRoot" class="hidden"></div>
+  </section>
+
+  <section id="campaigns" class="page">
+    <div class="page-head campaign-list-head">
+      <div><span class="eyebrow">MESA</span><h2>Campanhas</h2><p class="muted">Monte a ordem de iniciativa, acompanhe PV/PE, role dados e passe turnos.</p></div>
+      <button class="primary" onclick="openCreateCampaign()">＋ Criar campanha</button>
+    </div>
+    <div id="campaignList" class="campaign-grid"></div>
+    <div id="campaignPageRoot" class="hidden"></div>
+  </section>
+
+  <section id="threats" class="page">
+    <div class="page-head">
+      <div><span class="eyebrow">MESTRE</span><h2>Ameaças</h2><p class="muted">Ameaças prontas e todas as que você criar no Homebrew.</p></div>
+      <div class="head-actions"><input id="threatSearch" class="head-search" placeholder="🔎 Pesquisar ameaça" oninput="renderThreats()"><button class="primary" onclick="openThreatHomebrewFromPage()">＋ Criar ameaça</button></div>
+    </div>
+    <div id="threatList" class="threat-grid"></div>
+  </section>
+
+  <section id="homebrew" class="page"><div id="homebrewRoot"></div></section>
+
+</main>
+
+<!-- LOGIN -->
+<div id="loginModal" class="modal hidden">
+  <div class="modal-box">
+    <button class="close" onclick="closeModal('loginModal')">×</button>
+    <span class="eyebrow">CONTA LOCAL</span><h2>Entrar</h2>
+    <p>Este modo não usa senha. O nome só serve para identificar quem está usando este navegador.</p>
+    <label>Nome de usuário<input id="username" placeholder="Ex.: KakalYtz"></label>
+    <button class="primary full" onclick="localLogin()">Entrar</button>
+    <div class="login-note">Depois podemos conectar Google + Supabase sem apagar a estrutura local.</div>
+  </div>
+</div>
+
+<!-- OPÇÕES / TEMAS -->
+<div id="optionsModal" class="modal hidden">
+  <div class="modal-box">
+    <button class="close" onclick="closeModal('optionsModal')">×</button>
+    <span class="eyebrow">OPÇÕES</span><h2>Aparência</h2>
+    <p>O padrão do site é o escuro. Escolha o visual que quiser; a preferência fica salva neste navegador.</p>
+    <div id="themeOptions" class="theme-settings"></div>
+    <section class="ui-scale-section" aria-labelledby="uiScaleTitle">
+      <span class="eyebrow">ACESSIBILIDADE</span>
+      <h3 id="uiScaleTitle">Tamanho da interface</h3>
+      <p class="muted">Aumenta ou diminui letras, botões, cartões e controles. A preferência fica salva neste aparelho.</p>
+      <div id="uiScaleOptions" class="ui-scale-options"></div>
+    </section>
+    <div class="theme-note"><b>🌈 Tema da ficha</b><p>Pirata, Marinha, Revolucionário e Governo continuam sendo cores próprias do personagem. A opção acima muda a aparência geral do site.</p></div>
+  </div>
+</div>
+
+<!-- BIBLIOTECA -->
+<div id="libraryModal" class="modal hidden">
+  <div class="modal-box library-box">
+    <button class="close" onclick="closeModal('libraryModal')">×</button>
+    <span class="eyebrow">BIBLIOTECA</span><h2 id="libraryTitle">Biblioteca</h2>
+    <input id="librarySearch" class="search" placeholder="🔎 Pesquisar por nome ou descrição..." oninput="renderLibrary()">
+    <div id="libraryList"></div>
+  </div>
+</div>
+
+<!-- DETALHES -->
+<div id="detailModal" class="modal hidden">
+  <div class="modal-box wide-modal">
+    <button class="close" onclick="closeModal('detailModal')">×</button>
+    <div id="detailBody"></div>
+  </div>
+</div>
+
+<!-- EDITOR DE CONTEÚDO DA FICHA -->
+<div id="editModal" class="modal hidden">
+  <div class="modal-box wide-modal">
+    <button class="close" onclick="closeModal('editModal')">×</button>
+    <span class="eyebrow">EDITOR</span><h2 id="editModalTitle">Editar</h2>
+    <div id="editModalBody"></div>
+  </div>
+</div>
+
+<!-- EDITOR DE AMEAÇA DA CAMPANHA -->
+<div id="threatEditModal" class="modal hidden">
+  <div class="modal-box wide-modal">
+    <button class="close" onclick="closeModal('threatEditModal')">×</button>
+    <span class="eyebrow">AMEAÇA</span><h2 id="editThreatTitle">Editar ameaça</h2>
+    <div id="editThreatBody"></div>
+  </div>
+</div>
+
+<!-- CRIADOR HOMEBREW -->
+<div id="homebrewEditModal" class="modal hidden">
+  <div class="modal-box wide-modal">
+    <button class="close" onclick="closeModal('homebrewEditModal')">×</button>
+    <span class="eyebrow">HOMEBREW</span><h2 id="homebrewEditTitle">Criar</h2>
+    <div id="homebrewEditBody"></div>
+  </div>
+</div>
+
+<!-- CRIAR CAMPANHA -->
+<div id="campaignCreateModal" class="modal hidden">
+  <div class="modal-box">
+    <button class="close" onclick="closeModal('campaignCreateModal')">×</button>
+    <span class="eyebrow">NOVA MESA</span><h2>Criar campanha</h2>
+    <p>Dê um nome para a campanha. Depois você adicionará agentes e ameaças clicando neles.</p>
+    <label>Nome da campanha<input id="campaignNameInput" placeholder="Ex.: A Lenda do Mar Infinito"></label>
+    <button class="primary full" onclick="createCampaignFromModal()">⚓ Criar campanha</button>
+  </div>
+</div>
+
+<!-- ESCOLHER CAMPANHA -->
+<div id="campaignSelectorModal" class="modal hidden">
+  <div class="modal-box">
+    <button class="close" onclick="closeModal('campaignSelectorModal')">×</button>
+    <span class="eyebrow">CAMPANHA</span><h2 id="campaignSelectorTitle">Escolha a campanha</h2>
+    <div id="campaignSelectorList"></div>
+  </div>
+</div>
+
+<!-- FOTO AMPLIADA -->
+<div id="avatarViewerModal" class="modal hidden">
+  <div class="modal-box avatar-viewer-box">
+    <button class="close" onclick="closeModal('avatarViewerModal')">×</button>
+    <span class="eyebrow">IMAGEM DO PERSONAGEM</span>
+    <img id="avatarViewerImage" class="avatar-viewer-image" alt="Imagem ampliada do personagem">
+    <p class="muted">Clique fora da janela ou em × para fechar.</p>
+  </div>
+</div>
+
+<!-- INSTALAÇÃO PWA -->
+<div id="installHelpModal" class="modal hidden">
+  <div class="modal-box">
+    <button class="close" onclick="closeModal('installHelpModal')">×</button>
+    <span class="eyebrow">CELULAR</span><h2>Instalar WEIRD RPG</h2>
+    <p>Quando o navegador permitir, o botão 📱 instala o site como aplicativo, com ícone e tela própria.</p>
+    <div class="help-banner"><b>Android/Chrome:</b> abra pelo endereço HTTPS ou localhost e use <b>Instalar aplicativo</b> no menu do navegador.
+    <br><br><b>iPhone/Safari:</b> use <b>Compartilhar → Adicionar à Tela de Início</b>.</div>
+    <button class="primary full" onclick="closeModal('installHelpModal')">Entendi</button>
+  </div>
+</div>
+
+<!-- ROLAGEM PERSONALIZADA -->
+<div id="diceModal" class="modal hidden">
+  <div class="modal-box">
+    <button class="close" onclick="closeModal('diceModal')">×</button>
+    <span class="eyebrow">DADOS</span><h2>Rolagem personalizada</h2>
+    <p>Use formatos como <b>1d20</b>, <b>2d6</b>, <b>2d8+3</b> ou <b>3d10-1</b>.</p>
+    <label>Expressão<input id="customDiceInput" value="1d20" placeholder="Ex.: 2d6+3" onkeydown="if(event.key==='Enter')performCustomDice()"></label>
+    <button class="primary full" onclick="performCustomDice()">🎲 Rolar</button>
+  </div>
+</div>
+
+<!-- RESULTADO GRANDE -->
+<div id="diceResult" class="dice-result hidden" role="dialog" aria-label="Resultado da rolagem">
+  <div class="dice-result-header">
+    <div class="dice-drag-handle" title="Segure e arraste por aqui">☷ <span>Segure aqui para mover</span></div>
+    <button id="diceResultClose" class="dice-result-close" onclick="dismissDiceResult()" aria-label="Fechar resultado">×</button>
+  </div>
+  <span class="eyebrow">RESULTADO</span>
+  <b id="diceResultTitle">D20</b>
+  <strong id="diceResultMain">20</strong>
+  <small id="diceResultExtra"></small>
+  <button class="dice-result-dismiss" onclick="dismissDiceResult()">Fechar resultado</button>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<input id="avatarFile" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+<input id="importFile" type="file" accept=".json,application/json,text/plain" hidden>
+<input id="threatImageFile" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+<input id="threatImportFile" type="file" accept=".json,application/json,text/plain" hidden>
+<input id="fruitImportFile" type="file" accept=".json,application/json,text/plain" hidden>
+<input id="campaignMapBackgroundFile" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+<input id="campaignMapTokenFile" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+<input id="campaignMapImportFile" type="file" accept=".json,application/json,text/plain" hidden>
+
+<script src="script.js?v=26"></script>
+</body>
+</html>
